@@ -1,0 +1,61 @@
+import pandas as pd
+
+# Load dataset
+df = pd.read_excel("Extension_Task_SpotifyFeatures.xlsx")
+df.head()
+
+////📊 1. Distribution of Danceability
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(10, 6))
+sns.histplot(df['danceability'], bins=30, kde=True, color='orchid')
+plt.title("Distribution of Danceability Across Songs")
+plt.xlabel("Danceability")
+plt.ylabel("Number of Songs")
+plt.grid(True)
+plt.show()
+
+/////🎚️ 2. Energy vs Loudness Scatter Plot
+
+plt.figure(figsize=(10, 6))
+sns.scatterplot(data=df, x='loudness', y='energy', hue='genre', alpha=0.7)
+plt.title("Energy vs Loudness by Genre")
+plt.xlabel("Loudness (dB)")
+plt.ylabel("Energy")
+plt.legend(loc='upper left', bbox_to_anchor=(1, 1))
+plt.grid(True)
+plt.show()
+
+/////📈 3. Popularity by Genre (Top 10)
+
+top_genres = df.groupby('genre')['popularity'].mean().sort_values(ascending=False).head(10)
+
+plt.figure(figsize=(10, 6))
+sns.barplot(x=top_genres.values, y=top_genres.index, palette="viridis")
+plt.title("Top 10 Genres by Average Popularity")
+plt.xlabel("Average Popularity")
+plt.ylabel("Genre")
+plt.grid(True, axis='x')
+plt.show()
+
+//////🕒 4. Tempo Distribution by Genre
+
+plt.figure(figsize=(12, 6))
+sns.boxplot(data=df[df['genre'].isin(top_genres.index)], x='genre', y='tempo', palette="coolwarm")
+plt.title("Tempo Distribution Across Top Genres")
+plt.xlabel("Genre")
+plt.ylabel("Tempo (BPM)")
+plt.xticks(rotation=45)
+plt.show()
+
+//////📊 5. Correlation Heatmap of Features
+
+plt.figure(figsize=(12, 8))
+numeric_features = df.select_dtypes(include='number')  # Filter only numeric columns
+corr_matrix = numeric_features.corr()
+
+sns.heatmap(corr_matrix, annot=True, cmap='Blues', fmt=".2f")
+plt.title("Correlation Between Audio Features")
+plt.show()
